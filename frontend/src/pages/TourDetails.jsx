@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
@@ -63,6 +64,39 @@ const createBooking = async () => {
       return;
     }
 
+    // Create Razorpay Order
+    const { data } = await axios.post(
+      "http://localhost:5050/api/payment/create-order",
+      {
+        amount: tour.price * guestSize,
+      }
+    );
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: data.order.amount,
+      currency: data.order.currency,
+      name: "Tours & Travels",
+      description: tour.title,
+      order_id: data.order.id,
+
+      handler: async function (response) {
+
+  try {
+
+    // Verify Payment
+    const verify = await api.post("/payment/verify-payment", {
+      razorpay_order_id: response.razorpay_order_id,
+      razorpay_payment_id: response.razorpay_payment_id,
+      razorpay_signature: response.razorpay_signature,
+    });
+
+    if (!verify.data.success) {
+      alert("Payment Verification Failed");
+      return;
+    }
+
+    // Create Booking
     await api.post("/bookings", {
       userId: user?._id || user?.id,
       tourId: tour._id,
@@ -70,9 +104,32 @@ const createBooking = async () => {
       phone,
       guestSize,
       bookAt,
+      paymentId: response.razorpay_payment_id,
+      paymentStatus: "Paid",
     });
 
-    alert("Booking successful 🎉");
+    alert("🎉 Payment Successful! Booking Confirmed.");
+
+  } catch (error) {
+    console.log(error);
+    alert("Something went wrong");
+  }
+
+},
+
+      prefill: {
+        name: fullName,
+        contact: phone,
+      },
+
+      theme: {
+        color: "#0d6efd",
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+
   } catch (error) {
     console.log(error);
   }

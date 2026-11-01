@@ -14,28 +14,24 @@ import Admin from "./pages/Admin";
 function App() {
   return (
     <BrowserRouter>
+  <div className="d-flex flex-column min-vh-100">
     <Navbar />
+    <main className="flex-grow-1">
       <Routes>
         <Route path="/" element={<Home />} />
-
         <Route path="/tours" element={<Tours />} />
-
         <Route path="/tours/:id" element={<TourDetails />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/register" element={<Register />} />
-
         <Route path="/wishlist" element={<Wishlist />} />
-
         <Route path="/booking" element={<Booking />} />
-
         <Route path="/profile" element={<Profile />} />
-
         <Route path="/admin" element={<Admin />} />
       </Routes>
-       <Footer />
-    </BrowserRouter>
+    </main>
+    <Footer />
+  </div>
+</BrowserRouter>
   );
 }
 

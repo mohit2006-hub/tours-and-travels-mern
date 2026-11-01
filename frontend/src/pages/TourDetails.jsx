@@ -65,12 +65,9 @@ const createBooking = async () => {
     }
 
     // Create Razorpay Order
-    const { data } = await axios.post(
-      "http://localhost:5050/api/payment/create-order",
-      {
-        amount: tour.price * guestSize,
-      }
-    );
+    const { data } = await api.post("/payment/create-order", {
+  amount: tour.price * guestSize,
+});
 
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,

@@ -13,8 +13,7 @@ const bookingRoutes = require("./routes/bookingRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 
 
-console.log("KEY ID:", process.env.RAZORPAY_KEY_ID);
-console.log("KEY SECRET:", process.env.RAZORPAY_KEY_SECRET);
+
 
 connectDB();
 
